@@ -14,7 +14,7 @@ pub use self::events::*;
     let mut container = $crate::components::Container::new();
     layout_inner!(container, component, $($inner)*);
     container.view.add_component(component.clone());
-    container.view.root_component = Some(component);
+    container.view.set_root_component(component);
 
     container
   }}

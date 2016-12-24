@@ -3,6 +3,8 @@ use super::{ Color, Size };
 static mut NEXT_ID: u64 = 1;
 pub const COMPONENT_NONE: u64 = 0;
 
+// TODO: Make this a trait and make a panel to implement this
+// TODO: Make a ComponentWrapper to cache render data
 #[derive(Debug, Clone)]
 pub struct Component {
   pub id: u64,

@@ -1,17 +1,28 @@
+use vecmath::Vector4;
+
+pub type SizeType = i16;
 
 #[derive(Debug, Clone, Copy)]
 pub enum Size {
   Unknown,
-  Pixels(u32),
-  Percentage(u32),
+  Pixels(SizeType),
+  Percentage(SizeType),
 }
 
 impl Size {
-  pub fn get_pixel_position(self, min_value: f32, max_value: f32) -> f32 {
+  pub fn get_pixel_position(self, min_value: SizeType, max_value: SizeType) -> SizeType {
     match self {
       Size::Unknown => min_value,
-      Size::Pixels(p) => min_value + p as f32,
-      Size::Percentage(p) => ((max_value - min_value) * p as f32 / 100f32) + min_value,
+      Size::Pixels(p) => min_value + p as SizeType,
+      Size::Percentage(p) => ((max_value - min_value) * p as SizeType / 100) + min_value,
+    }
+  }
+
+  pub fn get_pixel_position_reversed(self, min_value: SizeType, max_value: SizeType) -> SizeType {
+    match self {
+      Size::Unknown => max_value,
+      Size::Pixels(p) => max_value - p as SizeType,
+      Size::Percentage(p) => max_value - ((max_value - min_value) * p as SizeType / 100),
     }
   }
 
@@ -29,12 +40,26 @@ impl Size {
   }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum Color {
   Unknown,
   Predefined(PredefinedColor),
   RGB(f32, f32, f32),
   RGBA(f32, f32, f32, f32),
+}
+
+impl Color {
+  pub fn to_vector(&self) -> Vector4<f32> {
+    match *self {
+      Color::Unknown => [1f32, 1f32, 1f32, 1f32],
+      Color::Predefined(x) => {
+        let x = x as i32;
+        [((x >> 16) & 0xFF) as f32 / 255f32, ((x >> 8) & 0xFF) as f32 / 255f32, (x & 0xFF) as f32 / 255f32, 1f32]
+      },
+      Color::RGB(r, g, b) => [r, g, b, 1f32],
+      Color::RGBA(r, g, b, a) => [r, g, b, a],
+    }
+  }
 }
 
 impl Into<Color> for PredefinedColor {
@@ -44,7 +69,7 @@ impl Into<Color> for PredefinedColor {
 }
 
 #[allow(non_camel_case_types)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum PredefinedColor {
   pink = 0xffc0cb,
   lightpink = 0xffb6c1,

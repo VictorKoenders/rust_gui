@@ -52,8 +52,8 @@ impl ::std::fmt::Debug for Container {
 
 #[derive(Debug, Default)]
 pub struct View {
-  pub root_component: Option<Component>,
-  pub components: HashMap<u64, Component>,
+  root_component: Option<Component>,
+  components: HashMap<u64, Component>,
 }
 
 impl View{
@@ -68,6 +68,7 @@ impl View{
     self.components.insert(component.id, component);
   }
 
+  // TODO: If we're rendering, notify that this component could have been updated
   pub fn get_parent(&self, child_component: &Component) -> Option<&Component> {
     if child_component.parent == super::component::COMPONENT_NONE {
       None
@@ -76,6 +77,7 @@ impl View{
     }
   }
 
+  // TODO: If we're rendering, notify that this component could have been updated
   pub fn get_parent_mut(&mut self, child_component: &Component) -> Option<&mut Component> {
     if child_component.parent == super::component::COMPONENT_NONE {
       None
@@ -84,11 +86,24 @@ impl View{
     }
   }
 
+  // TODO: If we're rendering, notify that this component could have been updated
   pub fn get_component(&self, id: u64) -> Option<&Component> {
     self.components.get(&id)
   }
 
+  // TODO: If we're rendering, notify that this component could have been updated
   pub fn get_component_mut(&mut self, id: u64) -> Option<&mut Component> {
     self.components.get_mut(&id)
+  }
+
+  pub fn get_root_id(&self) -> Option<u64> {
+    match self.root_component {
+      Some(ref c) => Some(c.id),
+      None => None
+    }
+  }
+
+  pub fn set_root_component(&mut self, component: Component) {
+    self.root_component = Some(component);
   }
 }

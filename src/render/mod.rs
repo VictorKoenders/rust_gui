@@ -3,6 +3,10 @@ use components::{ Component, Container };
 use vecmath::Vector2;
 
 mod render_target;
+mod error;
+mod utils;
+
+pub type Result<T> = ::std::result::Result<T, error::RenderError>;
 
 #[derive(Default)]
 pub struct Render<'a> {
@@ -31,32 +35,28 @@ impl<'a> Render<'a> {
 
   fn get_root_component_id(&self) -> Option<u64> {
     match self.container {
-      Some(ref c) => {
-        match c.view.root_component {
-          Some(ref c) => Some(c.id),
-          None => None
-        }
-      },
+      Some(ref c) => c.view.get_root_id(),
       None => None
     }
   }
 
-  pub fn render(mut self) {
+  pub fn render(mut self) -> Result<()> {
     if self.container.is_none() {
       panic!("Cannot start render without view");
     }
-    let mut target = render_target::RenderTarget::new();
+    let mut target = render_target::RenderTarget::new()?;
 
-    loop {
-      target.render(&mut self);
+    'render_loop: loop {
+      target.render(&mut self)?;
 
       for ev in target.display.poll_events() {
         match ev {
-          Event::Closed | Event::KeyboardInput(ElementState::Pressed, _, Some(VirtualKeyCode::Escape)) => return,
+          Event::Closed | Event::KeyboardInput(ElementState::Pressed, _, Some(VirtualKeyCode::Escape)) => break 'render_loop,
           _ => ()
         }
       }
     }
+    Ok(())
   }
 }
 
