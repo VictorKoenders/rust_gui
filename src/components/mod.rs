@@ -47,11 +47,29 @@ macro_rules! layout_inner {
     layout_inner!($view, $component, $($remaining)*);
   };
 
+// Left with variable value
+//
+// let left_offset = Size::Pixels(10);
+// left: left_offset
+  ($view:tt, $component:expr, left: $value:expr, $($remaining:tt)*) => {
+    $component.left = ::std::convert::From::from($value);
+    layout_inner!($view, $component, $($remaining)*);
+  };
+
 // Top with pixel value
 //
 // top: 100 px
   ($view:tt, $component:expr, top: $value:tt px $($remaining:tt)*) => {
     $component.top = $crate::components::Size::Pixels($value);
+    layout_inner!($view, $component, $($remaining)*);
+  };
+
+// Top with variable value
+//
+// let top_offset = Size::Pixels(10);
+// top: top_offset
+  ($view:tt, $component:expr, top: $value:expr, $($remaining:tt)*) => {
+    $component.top = ::std::convert::From::from($value);
     layout_inner!($view, $component, $($remaining)*);
   };
 
@@ -63,11 +81,29 @@ macro_rules! layout_inner {
     layout_inner!($view, $component, $($remaining)*);
   };
 
+// Right with variable value
+//
+// let right_offset = Size::Pixels(10);
+// right: right_offset
+  ($view:tt, $component:expr, right: $value:expr, $($remaining:tt)*) => {
+    $component.right = ::std::convert::From::from($value);
+    layout_inner!($view, $component, $($remaining)*);
+  };
+
 // Bottom with pixel value
 //
 // bottom: 100 px
   ($view:tt, $component:expr, bottom: $value:tt px $($remaining:tt)*) => {
     $component.bottom = $crate::components::Size::Pixels($value);
+    layout_inner!($view, $component, $($remaining)*);
+  };
+
+// Bottom with pixel value
+//
+// let bottom_offset = Size::Pixels(10);
+// bottom: bottom_offset
+  ($view:tt, $component:expr, bottom: $value:expr, $($remaining:tt)*) => {
+    $component.bottom = $value;
     layout_inner!($view, $component, $($remaining)*);
   };
 
@@ -107,17 +143,16 @@ macro_rules! layout_inner {
 //
 // color: "red"
   ($view:tt, $component:expr, color: rgb($r:tt, $g:tt, $b:tt) $($remaining:tt)*) => {
-    $component.color = $crate::components::Color::Rgb($r, $g, $b);
+    $component.color = $crate::components::Color::RGB($r as f32, $g as f32, $b as f32);
     layout_inner!($view, $component, $($remaining)*);
   };
 
-// Color with any value
+// Color with argument value
 //
-// color: "red"
-  ($view:tt, $component:expr, color: $value:tt $($remaining:tt)*) => {
-    $component.color = $crate::components::Color::Predefined(
-      $crate::components::PredefinedColor::$value
-    );
+// let color_red = Color::RGB(1f32, 1f32, 1f32);
+// color: color_red
+  ($view:tt, $component:expr, color: $value:expr, $($remaining:tt)*) => {
+    $component.color = ::std::convert::From::from($value);
     layout_inner!($view, $component, $($remaining)*);
   };
 
