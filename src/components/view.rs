@@ -1,15 +1,16 @@
 use super::{Component, EventMap};
-use std::collections::HashMap;
+//use std::collections::HashMap;
 use render::Render;
+use glium::Frame;
 
 #[derive(Default)]
-pub struct Container {
-    pub view: View,
+pub struct Container<'a> {
+    pub view: View<'a>,
     pub events: EventMap,
 }
 
-impl Container {
-    pub fn new() -> Container {
+impl<'a> Container<'a> {
+    pub fn new() -> Container<'a> {
         Container {
             view: View::new(),
             events: EventMap::new(),
@@ -17,14 +18,14 @@ impl Container {
     }
 
     pub fn mount(&mut self, _render_target: &mut Render) {
-        for event in &self.events.load {
-            let component_id = match self.view.get_component(*event.0) {
+        for _event in &self.events.load {
+            /*let component_id = match self.view.get_component(*event.0) {
                 Some(c) => c.id,
                 None => continue,
             };
             for callback in event.1 {
                 callback(&mut self.view, component_id, &mut super::LoadEvent {});
-            }
+            }*/
         }
     }
 
@@ -52,30 +53,41 @@ impl Container {
     }
 }
 
-impl ::std::fmt::Debug for Container {
+impl<'a> ::std::fmt::Debug for Container<'a> {
     fn fmt(&self, fmt: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
         write!(fmt, "{:?}", self.view)
     }
 }
 
 #[derive(Debug, Default)]
-pub struct View {
-    root_component: Option<Component>,
-    components: HashMap<u64, Component>,
+pub struct View<'a> {
+    root_components: Vec<&'a Component>,
+    components: Vec<Box<Component>>,
 }
 
-impl View {
-    pub fn new() -> View {
+impl<'a> Component for View<'a> {
+    fn get_children<'b>(&'b self) -> &'b Vec<&'b Component> {
+        &self.root_components
+    }
+
+    fn render(&self, _frame: &mut Frame) {
+        unimplemented!()
+    }
+}
+
+impl<'a> View<'a> {
+    pub fn new() -> View<'a> {
         View {
-            root_component: None,
-            components: HashMap::new(),
+            root_components: Vec::new(),
+            components: Vec::new(),
         }
     }
 
-    pub fn add_component(&mut self, component: Component) {
-        self.components.insert(component.id, component);
+    pub fn add_component(&mut self, component: Box<Component>) {
+        self.components.push(component);
     }
 
+    /*
     // TODO: If we're rendering, notify that this component could have been updated
     pub fn get_parent(&self, child_component: &Component) -> Option<&Component> {
         if child_component.parent == super::component::COMPONENT_NONE {
@@ -113,5 +125,5 @@ impl View {
 
     pub fn set_root_component(&mut self, component: Component) {
         self.root_component = Some(component);
-    }
+    }*/
 }

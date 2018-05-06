@@ -1,29 +1,23 @@
-use glium::glutin::{ElementState, Event, VirtualKeyCode};
-use components::{Component, Container};
+use components::{Container};
 use vecmath::Vector2;
 
-mod render_target;
+//mod render_target;
 mod error;
-mod utils;
+pub mod utils;
 
 pub type Result<T> = ::std::result::Result<T, error::RenderError>;
 
-#[derive(Default)]
 pub struct Render<'a> {
-    pub container: Option<&'a mut Container>,
+    pub container: &'a Container<'a>,
 }
 
 
 impl<'a> Render<'a> {
-    pub fn new() -> Render<'a> {
-        Render { container: None }
+    pub fn new(container: &'a Container) -> Render<'a> {
+        Render { container: container }
     }
 
-    pub fn mount(&mut self, container: &'a mut Container) {
-        self.container = Some(container);
-    }
-
-
+/*
     fn get_component_by_id(&self, id: u64) -> Option<Component> {
         match self.container {
             Some(ref c) => c.view.get_component(id).cloned(),
@@ -37,8 +31,11 @@ impl<'a> Render<'a> {
             None => None,
         }
     }
+    */
 
-    pub fn render(mut self) -> Result<()> {
+    pub fn render(self) -> Result<()> {
+        Ok(())
+            /*
         if self.container.is_none() {
             panic!("Cannot start render without view");
         }
@@ -57,7 +54,7 @@ impl<'a> Render<'a> {
                 }
             }
         }
-        Ok(())
+        Ok(())*/
     }
 }
 

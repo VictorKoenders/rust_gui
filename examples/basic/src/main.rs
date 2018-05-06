@@ -1,14 +1,16 @@
+#![allow(dead_code, unused_imports, unused_variables)]
+
 #[macro_use]
 extern crate gui;
 
-use gui::components::{Color, Size};
+use gui::components::{Color, Size, Rectangle};
 use gui::render::Render;
 
 pub fn main() {
     let color_blue = Color::RGB(0f32, 1f32, 0f32);
     let margin = Size::Pixels(50);
 
-    let mut view = layout!(Component {
+    let mut view = layout!(Rectangle {
         // special layout syntax
         left: 50 px,
         top: 50 px,
@@ -16,7 +18,7 @@ pub fn main() {
         bottom: 50 px,
         color: rgb(1, 0, 0),
 
-        Component {
+        Rectangle {
             // variables work as well
             left: margin,
             right: margin,
@@ -24,7 +26,7 @@ pub fn main() {
             bottom: margin,
             color: color_blue,
 
-            Component {
+            Rectangle {
                 // Or direct values from rust
                 left: Size::Pixels(50),
                 right: Size::Pixels(50),
@@ -34,9 +36,9 @@ pub fn main() {
             }
         }
     });
-
+/*
     let mut render = Render::new();
     render.mount(&mut view);
 
-    render.render().unwrap();
+    render.render().unwrap();*/
 }

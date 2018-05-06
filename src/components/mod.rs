@@ -3,7 +3,7 @@ mod view;
 mod utils;
 mod events;
 
-pub use self::component::Component;
+pub use self::component::{Component, Rectangle};
 pub use self::utils::*;
 pub use self::view::*;
 pub use self::events::*;
@@ -11,11 +11,9 @@ pub use self::events::*;
 #[macro_export]
 macro_rules! layout {
   ($component:tt { $($inner:tt)* }) => {{
-    let mut component = $crate::components::$component::new(0);
     let mut container = $crate::components::Container::new();
+    let mut component = $crate::components::$component::from_parent(&container.view);
     layout_inner!(container, component, $($inner)*);
-    container.view.add_component(component.clone());
-    container.view.set_root_component(component);
 
     container
   }}
@@ -29,12 +27,12 @@ macro_rules! layout_inner {
 //   ...
 // }
   ($view:tt, $parent_component:tt, $name:tt { $($inner:tt)* } $($remaining:tt)*) => {
-    let mut inner_component = $crate::components::$name::new($parent_component.id);
+    let mut inner_component = $crate::components::$name::from_parent(&$parent_component);
 
     layout_inner!($view, inner_component, $($inner)*);
-    $parent_component.children.push(inner_component.id);
+    $parent_component.children.push(&inner_component);
 
-    $view.view.add_component(inner_component);
+    $view.view.add_component(Box::new(inner_component));
 
     layout_inner!($view, $parent_component, $($remaining)*);
   };
@@ -161,7 +159,7 @@ macro_rules! layout_inner {
 // onClick: some_function
   ($view:tt, $component:expr, onClick: $value:tt $($remaining:tt)*) => {
     $view.events.click
-      .entry($component.id)
+      .entry($component)
       .or_insert_with(||Vec::new())
       .push(Box::new($value));
     layout_inner!($view, $component, $($remaining)*);
@@ -172,7 +170,7 @@ macro_rules! layout_inner {
 // onLoad: some_function
   ($view:tt, $component:expr, onLoad: $value:tt $($remaining:tt)*) => {
     $view.events.load
-      .entry($component.id)
+      .entry($component)
       .or_insert_with(||Vec::new())
       .push(Box::new($value));
     layout_inner!($view, $component, $($remaining)*);

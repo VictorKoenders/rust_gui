@@ -1,4 +1,4 @@
-use components::{Component, SizeType};
+use components::{SizeType};
 
 #[derive(Debug, Clone)]
 pub struct Rect {
@@ -31,7 +31,7 @@ impl Rect {
     pub fn bottom(&self) -> SizeType {
         self.y + self.height
     }
-
+/*
     pub fn calculate_from_parent(parent: &Rect, component: &Component) -> Rect {
         let left = {
             if component.left.is_known() {
@@ -90,5 +90,5 @@ impl Rect {
             screen_width: parent.screen_width,
             screen_height: parent.screen_height,
         }
-    }
+    }*/
 }
