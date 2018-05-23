@@ -1,6 +1,7 @@
-#[macro_use]
-extern crate glium;
-extern crate vecmath;
-
-pub mod components;
-pub mod render;
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn it_works() {
+        assert_eq!(2 + 2, 4);
+    }
+}

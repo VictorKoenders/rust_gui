@@ -1,12 +1,6 @@
 [package]
-name = "gui"
+name = "rust_gui"
 version = "0.1.0"
 authors = ["Victor Koenders <victor.koenders@gmail.com>"]
 
-[[bin]]
-name = "gui"
-path = "examples/basic/src/main.rs"
-
 [dependencies]
-glium = "*"
-vecmath = "*"

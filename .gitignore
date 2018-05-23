@@ -3,3 +3,7 @@ target
 Cargo.lock
 *.bk
 rls
+
+/target
+**/*.rs.bk
+Cargo.lock
